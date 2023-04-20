@@ -2,19 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class characterController : MonoBehaviour
+public class charController : MonoBehaviour
 {
-
     private int playerSpeed;
     private int speedState = 0;
     public List<SpriteRenderer> spriteRenderer = new List<SpriteRenderer>();
+    public List<GameObject> characters = new List<GameObject>();
+    private int currCharacter = 0;
 
-    void Awake()
+    private void Awake()
     {
-        foreach (SpriteRenderer childspriteRenderer in GetComponentsInChildren<SpriteRenderer>())
-        {
-            spriteRenderer.Add(childspriteRenderer);
-        }
+        getSpriteRenderer();
     }
 
     void Update()
@@ -22,6 +20,8 @@ public class characterController : MonoBehaviour
         playerMovement();
         changeSpeed();
         changeColors();
+        getSpriteRenderer();
+        switchCharacter();
     }
 
     private void playerMovement()
@@ -44,6 +44,18 @@ public class characterController : MonoBehaviour
         if (Input.GetKey(KeyCode.D))
         {
             transform.position += new Vector3(1, 0) * playerSpeed * Time.deltaTime;
+        }
+    }
+
+    public void getSpriteRenderer()
+    {
+        foreach (SpriteRenderer chars in GetComponentsInChildren<SpriteRenderer>())
+        {
+            foreach (SpriteRenderer childspriteRenderer in GetComponentsInChildren<SpriteRenderer>())
+            {
+                spriteRenderer.Add(childspriteRenderer);
+            }
+                
         }
     }
 
@@ -75,7 +87,7 @@ public class characterController : MonoBehaviour
         }
     }
 
-    private void changeColors()
+    public void changeColors()
     {
         if(Input.GetKeyDown(KeyCode.F))
         {
@@ -86,4 +98,34 @@ public class characterController : MonoBehaviour
         }
     }
 
+    private void switchCharacter()
+    {
+        if (Input.GetKeyDown(KeyCode.Alpha1) && currCharacter != 0)
+        {
+            characters[currCharacter].SetActive(false);
+            characters[0].SetActive(true);
+            currCharacter = 0;
+        }
+
+        if (Input.GetKeyDown(KeyCode.Alpha2) && currCharacter != 1)
+        {
+            characters[currCharacter].SetActive(false);
+            characters[1].SetActive(true);
+            currCharacter = 1;
+        }
+
+        if (Input.GetKeyDown(KeyCode.Alpha3) && currCharacter != 2)
+        {
+            characters[currCharacter].SetActive(false);
+            characters[2].SetActive(true);
+            currCharacter = 2;
+        }
+
+        if (Input.GetKeyDown(KeyCode.Alpha4) && currCharacter != 3)
+        {
+            characters[currCharacter].SetActive(false);
+            characters[3].SetActive(true);
+            currCharacter = 3;
+        }
+    }
 }
