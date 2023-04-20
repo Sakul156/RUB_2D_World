@@ -6,21 +6,22 @@ public class charController : MonoBehaviour
 {
     private int playerSpeed;
     private int speedState = 0;
-    public List<SpriteRenderer> spriteRenderer = new List<SpriteRenderer>();
+    public List<List<SpriteRenderer>> spriteRendererLists = new List<List<SpriteRenderer>>();
+    private List<SpriteRenderer> sr_currCharObject = new List<SpriteRenderer>();
     public List<GameObject> characters = new List<GameObject>();
     private int currCharacter = 0;
 
     private void Awake()
     {
         getSpriteRenderer();
+        sr_currCharObject = spriteRendererLists[0];
     }
 
     void Update()
     {
         playerMovement();
         changeSpeed();
-        changeColors();
-        getSpriteRenderer();
+        changeColors(sr_currCharObject);
         switchCharacter();
     }
 
@@ -49,13 +50,19 @@ public class charController : MonoBehaviour
 
     public void getSpriteRenderer()
     {
-        foreach (SpriteRenderer chars in GetComponentsInChildren<SpriteRenderer>())
+        // Get all child transforms
+        Transform[] children = new Transform[transform.childCount];
+        for (int i = 0; i < children.Length; i++)
         {
-            foreach (SpriteRenderer childspriteRenderer in GetComponentsInChildren<SpriteRenderer>())
-            {
-                spriteRenderer.Add(childspriteRenderer);
-            }
-                
+            children[i] = transform.GetChild(i);
+        }
+
+        // Create a list of SpriteRenderers for each child
+        foreach (Transform child in children)
+        {
+            List<SpriteRenderer> spriteRenderers = new List<SpriteRenderer>();
+            spriteRenderers.AddRange(child.GetComponentsInChildren<SpriteRenderer>());
+            spriteRendererLists.Add(spriteRenderers);
         }
     }
 
@@ -87,13 +94,13 @@ public class charController : MonoBehaviour
         }
     }
 
-    public void changeColors()
+    public void changeColors(List<SpriteRenderer> sr)
     {
         if(Input.GetKeyDown(KeyCode.F))
         {
-            for(int i = 0; i < spriteRenderer.Count; i++)
+            for(int i = 0; i < sr.Count; i++)
             {
-                spriteRenderer[i].color = Random.ColorHSV();              
+                sr[i].color = Random.ColorHSV();              
             }
         }
     }
@@ -105,6 +112,7 @@ public class charController : MonoBehaviour
             characters[currCharacter].SetActive(false);
             characters[0].SetActive(true);
             currCharacter = 0;
+            sr_currCharObject = spriteRendererLists[0];
         }
 
         if (Input.GetKeyDown(KeyCode.Alpha2) && currCharacter != 1)
@@ -112,6 +120,7 @@ public class charController : MonoBehaviour
             characters[currCharacter].SetActive(false);
             characters[1].SetActive(true);
             currCharacter = 1;
+            sr_currCharObject = spriteRendererLists[1];
         }
 
         if (Input.GetKeyDown(KeyCode.Alpha3) && currCharacter != 2)
@@ -119,6 +128,7 @@ public class charController : MonoBehaviour
             characters[currCharacter].SetActive(false);
             characters[2].SetActive(true);
             currCharacter = 2;
+            sr_currCharObject = spriteRendererLists[2];
         }
 
         if (Input.GetKeyDown(KeyCode.Alpha4) && currCharacter != 3)
@@ -126,6 +136,7 @@ public class charController : MonoBehaviour
             characters[currCharacter].SetActive(false);
             characters[3].SetActive(true);
             currCharacter = 3;
+            sr_currCharObject = spriteRendererLists[3];
         }
     }
 }
